@@ -380,3 +380,29 @@ str(height)
 user <- merge(height,weight, by.x="id", by.y="id")
 user
 
+# data.frame 객체 데이터 셋
+install.packages("psych")
+require(psych)
+data(galton)
+galton
+str(galton)
+head(galton,15)
+search(psych)
+# 차원 보기
+dim(galton) # 928개 데이터, 2개 변수
+describe(galton)
+# 데이터의 각 변수별 데이터 갯수, 평균, 표준편차, 중앙값, 10% 절사평균, 
+# 중위수 절대편차, 최소값, 최대값, 범위, 왜도, 첨도, 표준오차
+
+install.packages("stringr")
+require(stringr)
+# stringr 패키지 제공 함수
+# 1) str_length() : 문자열 길이 반환
+# 2) str_c() : 문자열 연결(결합), str_join()함수 개선
+# 3) str_sub() : 범위에 해당하는 부분 문자열 생성
+# 4) str_split() : 구분자를 기준으로 문자열을 분리하여 부분 문자열 생성
+# 5) str_replace() : 기존 문자열을 특정 문자열로 교체
+# 6) str_extract() : 문자열에서 특정 문자열 패턴의 첫번째 문자열 추출
+# 7) str_extract_all() : 문자열에서 특정 문자열 패턴의 모든 문자열 추출
+# 8) str_locate() : 문자열에서 특정 문자열 패턴의 첫번째 위치 찾기
+# 9) str_locate_all() : 문자열에서 특정 문자열 패턴의 첫번째 위치 찾기
