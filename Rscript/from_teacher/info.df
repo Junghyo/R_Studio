@@ -1,0 +1,14 @@
+# 변경된 url : 미국의 각 주별 1인당 소득자료  
+info.url <- "http://ssti.org/blog/useful-stats-capita-personal-income-state-2010-2015"
+info.df <- readHTMLTable(info.url, header=T, which=1, stringsAsFactors=F)
+# header=T : 컬럼명 있음, which=1 : 첫번째 table, stringsAsFactors 문자는 범주(값의 목록)처리 안함
+
+str(info.df)
+
+head(info.df)
+tail(info.df)
+
+# 컬럼명 추가
+names(info.df) <- c("State",'y2010','y2011','y2012','y2013','y2014','y2015')
+head(info.df) 
+info.df

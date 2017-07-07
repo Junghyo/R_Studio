@@ -1,0 +1,47 @@
+## <제5장 연습문제>
+#################################   
+# 01. iris3 데이터 셋을 대상으로 다음 조건에 맞게 산점도를 그리시오.
+
+# 조건1) iris3 데이터 셋의 칼럼명 확인 
+attributes(iris3)
+# 조건2) iris3 데이터 셋의 구조 보기   
+str(iris3)
+# 조건3) 꽃의 종류 별로 산점도 그리기 
+plot(iris3, main="iris3 전체 데이터 셋의 분포현황")
+plot(iris3[,c(3,1),1], main="iris3 데이터 셋의 Setosa 분포현황")
+plot(iris3[,c(4,2),2], main="iris3 데이터 셋의 Versicolor 분포현황")
+plot(iris3[,c(2,3),3], main="iris3 데이터 셋의 Virginica 분포현황")
+
+
+# 02.  iris 데이터 셋을 대상으로 다음 조건에 맞게 시각화 하시오.
+
+#  조건1) 1번 컬럼 x축, 3번 컬럼 y축으로 차트 작성
+#         힌트) plot(x, y)
+plot(iris[,1], iris[,3])
+plot(iris$Sepal.Length, iris$Petal.Length, col="red") # 모두 빨강색
+#  조건2) 5번 컬럼으로 색상 지정 
+#         힌트) plot(x, y, col=컬럼)
+plot(iris[,1], iris[,3], col=iris[,5])  # 5컬럼으로 색상 구분
+names(iris)
+plot(iris$Sepal.Length, iris$Petal.Length, col=iris$Species)
+#  조건3) "iris 데이터 테이블 산포도 차트" 제목 추가  
+#          힌트) title(main="제목")
+plot(iris$Sepal.Length, iris$Petal.Length, col=iris$Species)
+title(main="iris 데이터 테이블 산포도 차트")
+
+plot(iris) # iris 데이터를 대상으로 제공되는 모든 차트 그려줌
+plot(iris[, -5], col=iris[,5]) # 5번컬럼 제거, 색지정으로 사용
+title(main="다양한 차트")
+
+#  조건4) "C:/Rwork/Part-II"경로에 "iris.jpg" 파일명으로 차트 저장하기
+
+#작업 디렉터리 : "C:/Rwork/output"
+#파일명 : iris.jpg
+#픽셀 : 폭(720픽셀), 높이(480 픽셀)
+
+setwd("C:/Rwork/output") # 폴더 지정
+jpeg("iris.jpg", width=720, height=480) # 픽셀 지정 가능
+plot(iris$Sepal.Length, iris$Petal.Length, col=iris$Species)
+title(main="iris 데이터 테이블 산포도 차트")
+dev.off() # 장치 종료 
+# "c:/Rwork/Part-II" <- 이미지 파일 확인

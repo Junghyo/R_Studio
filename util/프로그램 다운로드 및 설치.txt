@@ -1,0 +1,17 @@
+1. R-3.3.2 for Windows(32/64 bit) 다운로드/설치
+   R 공식 사이트 : http://www.r-project.org
+   http://healthstat.snu.ac.kr/CRAN/
+   Download R for Windows -> base -> install R for the first time. 
+   -> Download R 3.3.1 for Windows > 실행
+
+2. RStudio 1.0.44 - Windows Vista/7/8 다운로드/설치
+   https://www.rstudio.com/
+  Download RStudio > Desktop > DOWNLOAD RSTUDIO DESKTOP
+  Installers
+  RStudio 0.99.903 - Windows Vista/7/8/10 클릭 > 저장
+
+3. java jdk 다운로드/설치 - 32/64 bit 다운로드/설치 
+  - 기존에 설치된 경우 JDK 설치 경로만 확인
+   http://www.oracle.com
+
+※ RStudio 실행 : 관리자 권한으로 실행
