@@ -406,3 +406,85 @@ require(stringr)
 # 7) str_extract_all() : 문자열에서 특정 문자열 패턴의 모든 문자열 추출
 # 8) str_locate() : 문자열에서 특정 문자열 패턴의 첫번째 위치 찾기
 # 9) str_locate_all() : 문자열에서 특정 문자열 패턴의 첫번째 위치 찾기
+
+str <- "ronaldo35messi31rooney34"
+# 문자열 길이
+str_length(str)
+# 특정 문자열 추출
+str_extract(str,"[1-9]{2}") # 하나만 추출
+str_extract_all(str,"[1-9]{2}") # 조건에 만족하는 문자열(숫자 2개이상) 전부 추출
+str_extract_all(str,"[a-z]{4,}") # 영문자 연속 4개 이상 추출
+str_extract_all(str, "[a-z]{3,5}") # 영문자 연속 3개~5개 추출
+
+str2 <- "호날두105Ronaldo1002you25네이마르2005"
+str_extract(str2,"Ronaldo") # 해당 문자열 추출
+str_extract(str2,"25") # 해당 숫자 추출
+str_extract(str2,"[가-히]{4}") # 해당 한글 연속 4자 추출
+str_extract_all(str2,"[a-z]{3}") # 영소문자 연속 3자 추출
+str_extract_all(str2,"[0-9]{4}") # 숫자 연속 4자 추출
+str_extract_all(str2,"[A-Z][a-z]{3,}") # 영대문자+영소문자 연속 3자 이상 추출
+str_extract_all(str2,"[^a-z]") # 영소문자 제외한 나머지 추출
+str_extract_all(str2,"[^a-z]{4}") # 영소문자를 제외한 연속된 4자 추출
+str_extract_all(str2,"[^가-히]{5}") # 한글 제외한 연속된 5자 추출
+str_extract_all(str2,"[^0-9]{3}") # 숫자 제외한 연속된 3자 추출
+
+# 많이 활용되는 정규식 표현처리
+# 단어: \\w
+# 숫자: \\d
+# 숫자: \\d
+# 주민등록번호 양식 검사
+# 6자리~7자리(첫자리(1,2,3,4)+6자리) [1,2,3,4][0-9]{6}
+code <- "123456-1234567seoul"
+str_extract_all(code,"[0-9]{6}-[1,2,3,4][0-9]{6}")
+str_extract_all(code,"\\d{6}-[1,2,3,4]\\d{6}")
+name <- "홍길동1234,이순신5678,강감찬1012"
+str_extract_all(name, "\\w{7,}") # 홍길동1234, 이순신5678, 강감찬1012
+str_extract_all(name, "\\w{4}") # 홍길동1, 이순신5, 강감찬1
+# email 양식 검색
+# 이메일은 문자로 4이상 시작하고 @반드시 입력하고 뒤에 3자리 이상
+# 반드시 입력, 도메인이름은 문자로 2자리 이상
+# tjwjdgy123@naver.com
+# [a-z]{4,}@[a-z]{3,}.[a-z]{2,}
+email <- '호날두tjwjdgy123@naver.com요다yoda@gmail.com서울'
+str_extract_all(email, '[a-z,0-9]{4,}@[a-z]{4,}.[a-z]{2,}')
+
+# 문자열 길이 구하기
+str2 # "호날두105Ronaldo1002you25네이마르2005"
+len <- str_length(str2)
+len # 30
+str_locate(str2, "네이마르") # 23~26
+str_sub(str2, 1, len-8) # str2 1부터~끝에서 8 자리 전까지 표시(네이마르2005 제거)
+string_sub <- str_sub(str2,1,22)
+
+# 대문자, 소문자 변경하기
+str_to_upper(str2)
+str_to_lower(str2)
+
+# 문자열 교체, 결합, 분리
+# 문자열 교체
+string_rep <- str_replace(string_sub, "호날두105", "Ronaldo32,")
+string_rep <- str_replace(string_rep, "Ronaldo1002", "Messi30,")
+string_rep <- str_replace(string_rep, "you25", "Rooney34,")
+string_rep
+# 문자열 결합
+string_c <- str_c(string_rep, "Neymar26")
+string_c
+# 문자열 분리
+string_sp <- str_split(string_c,",")
+string_sp
+mode(string_c); class(string_c); length(string_c) # character, character, 1
+mode(string_sp); class(string_sp); length(string_sp) # list, list, 1
+string <- unlist(string_sp)
+string
+mode(string); class(string); length(string) # character, character, 4
+
+# 문자열 합치기
+# 단계1 : 문자열 vector 만들기
+vec <- c("벤제마35", "박지성40", "이스코27", "포그바24")
+vec
+# 단계2 : 콤마를 기준으로 문자열 vector 합치기
+help(paste)
+string_join <- paste(vec, collapse=",")
+string_join
+str(vec); length(vec); # chr[1:4], 4
+str(string_join); length(string_join); # chr, 1
