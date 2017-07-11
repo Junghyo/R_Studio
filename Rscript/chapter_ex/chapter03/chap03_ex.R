@@ -35,6 +35,7 @@ head(infoData) # 상위 6개 관측치 보기
 # http://www.imf.org/external/pubs/ft/gfsr/2015/02/c1/boxfigure1_1_1.csv
 imf_df <- read.csv("http://www.imf.org/external/pubs/ft/gfsr/2015/02/c1/boxfigure1_1_1.csv", header=T)
 imf_df
+write.csv(imf_df,"imf_df.csv")
 View(imf_df)
 imf_df <- imf_df[-c(1:8),c(1:8)] # 필요없는 행 제거 및 열 선택
 # 컬럼 네이밍 
