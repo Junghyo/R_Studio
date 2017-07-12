@@ -98,6 +98,10 @@ dotchart(x, labels = NULL, groups = NULL, gdata = NULL,
 # xlab, ylab : x,y축 이름
 
 # 분기별 매출현황 dotchart 시각화
+postscriptFonts()
+pdf.options(family="Korea1")
+pdf("C:/R_Studio/Rscript/chapter/chapter05/dot_pie.pdf")
+
 chart_data
 names(chart_data)
 par(mfrow=c(1,1)) # 1행 1열 그래프 보기(한화면에 1개)
@@ -120,3 +124,4 @@ pie(x, labels = names(x), edges = 200, radius = 0.8,
 # 분기별 매출현황 시각화
 pie(chart_data, labels=names(chart_data), col=rainbow(8), cex=1.0)
 title("2014~2015년도 분기별 매출현황[piechart]")
+dev.off()
