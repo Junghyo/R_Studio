@@ -143,3 +143,35 @@ mean(VADeaths) # 30.92
 abline(h=30.92, lty=3, col="red")
 help(abline)
 dev.off()
+
+# hist(히스토그램) 시각화
+# 측정값의 범위(구간)을 x축, 범위에 속하는 측정값의 빈도수를 y축
+# iris 데이터 셋 가져오기
+data(iris)
+help(iris)
+head(iris)
+str(iris) # 변수 5개, 관측치 150개
+names(iris) # iris 변수명 : Sepal(꽃받침), Petal(꽃잎), Species(꽃의 종)
+mode(iris); class(iris) # list, data.frame
+levels(iris$Species) # 인자수 확인 : 3개
+
+# iris의 꽃받침 길이 hist 시각화
+range(iris$Sepal.Length) # 꽃받침 길이 범위 : 4.3~7.9
+hist(iris$Sepal.Length, xlab="iris$Sepal.Length", xlim=c(4.3,7.9), col="magenta",
+     main="Histogram of iris$Sepal.Length [frequency=T]")
+summary(iris$Sepal.Length)
+
+# iris의 꽃받침 넓이 hist 시각화
+range(iris$Sepal.Width) # 2.0~4.4
+hist(iris$Sepal.Width, xlab="iris$Sepal.Width", xlim=c(2.0,4.5), col="mistyrose",
+     main="Histogram of iris$Sepal.Width [frequency=T]")
+# iris의 꽃받침 넓이 확률밀도 hist 시각화
+hist(iris$Sepal.Width, freq=F, xlab="iris$Sepal.Width", xlim=c(2.0,4.5),
+     main="Histogram of iris$Sepal.Width [density, frequency=F]")
+# 정규분포 곡선 추정
+# 단계 1 : 히스토그램에 밀도를 기준으로 분포곡선 그리기
+lines(density(iris$Sepal.Width), col="red")
+# 단계 2 : 히스토그램에 정규분포 추정 곡선 추가
+curve(dnorm(x, mean(iris$Sepal.Width), sd(iris$Sepal.Width)), col="blue", add=T)
+legend(3.9, 1.2, c("density line","normal dist line"), col=c("red","blue"), lwd=1)
+
