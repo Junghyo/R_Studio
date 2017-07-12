@@ -16,6 +16,7 @@ table(client$result)
 
 # 2. 다음 vector(EMP)는 '입사년도이름급여'순으로 사원의 정보가 기록된 데이터이다.
 # 이 데이터를 이용하여 다음과 같은 출력결과가 나타나도록 함수를 정의하시오.
+library(stringr)
 emp <- c("2014홍길동220", "2002이순신300", "2010유관순260")
 emp_pay <- function(x){
   process1 <- str_extract_all(x, "[가-희][0-9]{3}")
@@ -24,7 +25,9 @@ emp_pay <- function(x){
   mean <- mean(sal)
   cat("전체 급여 평균 : ",mean,"\n")
   name <- str_extract_all(x, "[가-희]{3}")
+  name <- unlist(name)
   emp_df <- data.frame(name,sal)
+  emp_df$name <- as.character.default(emp_df$name)
   for(i in 1:3){
     if(emp_df$sal[i]>=260){
       cat(emp_df$name[i],"=>",emp_df$sal[i],"\n")
@@ -32,17 +35,7 @@ emp_pay <- function(x){
   }
 }
 emp_pay(emp)
-name <- str_extract_all(emp, "[가-희]{3}")
-name <- unlist(name)
-process1 <- str_extract_all(emp, "[가-희][0-9]{3}")
-process2 <- str_extract_all(process1, "[0-9]{3}")
-sal <- as.numeric(process2)
-df <- data.frame(name,sal)
-for(i in 1:3){
-  if(df$sal[i]>=260){
-    cat(df$name[i],"=>",df$sal[i])
-  }
-}
+
 # 3. 함수 y = f(x)에서 x의 값이 a에서 b까지 변할 때 △x=b-a 를 x 의 증분이라고 하며 
 # △y=f(b)-f(a)를 y의 증분이라고 한다. 여기서 평균변화율 △y/△x =f(b)-f(a)/b-a이다
 # 3-1 함수 f(x) = x³+4에서 x의 값이 1에서 3까지 변할 때, 평균변화율을 구하는 함를 작성하시오.
