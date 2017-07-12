@@ -88,3 +88,30 @@ job <- dataset01$job
 job[is.na(job)] <- 0
 newJobVal <- price * job
 newJobVal
+dataset2 <- read.csv(file.choose(), header=T)
+dataset2
+
+# 7장 연습문제 
+# 1.
+dataset <- read.csv("dataset.csv", header=T)
+dataset2 <- dataset
+# 1-1 역코딩 기준값 : 최대값+최소값
+reSt <- max(dataset2$position, na.rm=T)+min(dataset2$position, na.rm=T)
+# 1-2 pos <- dataset2$position
+pos <- dataset2$position
+# 1-3 cpos <- 역코딩 기준 - pos(역코딩처리)
+cpos <- reSt-pos
+# 1-4 data2$position <- cpos
+# 1-5 dataset2$position2[dataset2$position==1] <- "1급"
+
+#2.
+# 2-1 NA를 대체 데이터를 SETTING(0)
+resident0 <- ifelse(!is.na(dataset2$resident),dataset2$resident,0)
+dataset4 <- dataset2
+dataset4$resident <- resident0
+# 2-2 NA가 있는 ROW를 삭제하고 처리 
+dataset3 <- dataset2
+dataset3 <- subset(dataset3, !is.na(dataset3$resident))
+
+#3.
+dataset2$gender
