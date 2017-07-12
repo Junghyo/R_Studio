@@ -211,3 +211,127 @@ plot(price, type="o", pch=20, col="orange", lwd=3,main="pch=20, col=orange, lwd=
 plot(price, type="o", pch=20, col="orange", cex=1.5,
      main="pch=20, col=orange, cex=1.5")
 dev.off()
+
+# 시계열 자료
+data("WWWusage")
+str(WWWusage)
+class(WWWusage); mode(WWWusage) # ts, numeric
+plot.ts(WWWusage)
+
+# 중첨자료 시각화
+# 중복된 자료의 수 만큼 점의 크기 확대하기
+# 단계 1 : x, y vector 만들기
+x <- c(1,2,3,4,4,1,2,3,7,3,3,7,7,8,10)
+x
+y <- rep(2,15)
+y
+# 단계 2 : x, y vector를 table화
+table(x,y) # (1,2) : 데이터 2개, (2,2) : 데이터 2개, (3,2) : 데이터 4개 ....
+mode(table(x,y)); class(table(x,y)) # numeric, table
+# 단계 3 : 산점도 그리기
+par(mfrow=c(1,1))
+plot(x,y) # 중복되어도 점이 하나 동일한 크기로 나옴
+# 단계 4 : data.frame 생성
+xy_df <- as.data.frame(table(x,y))
+xy_df 
+mode(xy_df); class(xy_df) # list, data.frame : 빈도수도 나옴(freq)
+# 단계 5 : 좌표에 중복된 수 만큼 점 크기 확대
+pdf("C:/R_Studio/Rscript/chapter/chapter05/overlap_plot.pdf")
+plot(x,y, pch=20, col="blue", cex=1*xy_df$Freq, xlab="vector x's elements",
+     ylab="vector y's elements", main="plot[cex=1*xy_df$Freq, pch=1]")
+dev.off()
+# galton 데이터 셋 대상 중복 자료 시각화
+# 단계 1 : galton 데이터 셋 가져오기
+require(psych)
+data("galton")
+head(galton)
+str(galton) # 2개 변수, 928개 관측치
+mode(galton); class(galton) # list, data.frame
+
+# 단계 2 : galton 데이터 셋 table화
+galton_tb <- table(galton$parent, galton$child) # x,y 별 빈도수 확인
+mode(galton_tb); class(galton_tb) # numeric, table
+str(galton_tb) # 11행, 14열
+
+# 단계 3 : galton table을 data.frame화
+galton_df <- data.frame(galton_tb)
+galton_df
+names(galton_df) <- c("parent", "child", "freq")
+str(galton_df) # 3개 변수(freq 추가), 154관측치
+mode(galton_df); class(galton_df) # list, data.frame
+head(galton_df)
+
+# data.frame -> vector -> numeric -> 가중치 적용
+# vector화를 거치지 않으면 인데스 순이 나옴
+parent <- as.numeric(as.vector(galton_df$parent))
+head(parent); mode(parent); class(parent)
+range(parent) # 64~73
+child <- as.numeric(as.vector(galton_df$child))
+head(child); mode(child); class(child)
+range(child) # 61.7~73.7
+# 단계 4 : plot 그리기
+pdf("C:/R_Studio/Rscript/chapter/chapter05/galton_plot.pdf")
+plot(child~parent, pch=21, bg="green", cex=0.25*galton_df$freq, col="blue",
+     xlim=c(64,73), ylim=c(61.7,73.7), main="Galton's Mid parent child height's ScatterPlot")
+
+# galton 상관분석
+install.packages("UsingR")
+require(UsingR)
+sink("galton_cortest.txt")
+cor.test(galton$parent, galton$child)
+sink()
+# p-value < 2.2e-16로 parent, child 두 변수는 매우 유의한 상관관계를 가지고 있다.
+# 상관계수는 0.4587로 약한 양의 상관관계를 가진다.
+
+# 회귀식
+sink("galton_RegressionAnalysis.txt")
+model =lm(child ~ parent, data=galton)
+# y = 23.9415+0.6463x
+model
+# 회귀분석
+summary(model)
+# ① Residual
+# 예측하고자 하는 변수의 실제 값과 회귀분석으로 얻어진 값 사이의 차이에는
+# 표준오차로 인하여 차이가 발생하며 이를 잔차(residual)이라 한다
+
+# ② Significance stars
+# 계산된 p값에 따라 표시되는 별표의 수는 중요도의 수준을 나타내며, 
+# ***는 높은 중요도, *는 낮은 중요도를 의미한다
+# 위의 보기에서 ***가 의미하는 것은 부모의 신장과 자녀의 신장과의 관계를
+# 서로 영향을 끼치지 않음을 의미하는 것이다.
+
+# ③ Estimated coefficient
+# 회귀분석에 의하여 산출된 기울기 값이다.
+
+# ④ Standard error of the coefficient estimate
+# coefficient 추정치의 변동성을 측정한다
+
+# ⑤ t-value of the coefficient estimate
+# 변수에 대한 coefficient가 해당 모델에 대하여 의미가 있는지 여부를 측정하며 이 값 자체는
+# 사용하지 않으나 p값과 유의 수준을 계산하는데 사용한다
+
+# ⑥ Variable p-value
+# 유의수준으로 p값이 작을수록 신뢰구간에 들어간다
+ 
+# ⑦ Significance legend
+# 변수 옆에 구둣점이 많을수록 바람직 하다. 
+# 공백은 나쁨, 점은 꽤 좋음, 별은 좋음, 복수의 별은 아주 좋음을 의미한다
+# 
+# ⑧ Residual Std error / Degrees of freedom 
+# Residual Std error는 잔차의 표준편차이며, 자유도 (degree of freedom)은 샘플에 포함된
+# 관측치의 개수와 모델에 사용된 변수갯수와의 차이이다
+# 
+# ⑨ R – squared
+# 모델에 의하여 해석되는 예측의 변동량으로, 모델의 적합성을 평가하는 척도로도 사용된다.
+# 1이 최고치이므로 1에 가까운 값이 바람직하다.
+# 
+# ⑩ F-statistics & resulting p-value
+# 모델에서 F-test를 수행한다. 해당 모델의 변수를 취하고, 더 적은 수의 매개변수를 가진 모델과
+# 비교한다. 이론적으로 매개변수가 많은 쪽이 더 잘 맞아야 하며, 더 많은 매개변수를 가진 모델이
+# 더 적은 수의 매개변수를 가진 모델보다 잘 수행하지 않으면 
+# F-test는 더 높은 p-value를 갖게 된다. 반면에 매개변수가 더 많은 모델이
+# 매개변수가 적은 모델보다 낮다면 더 낮은 p-value를 갖게 된다.
+sink()
+plot(model)
+dev.off()
+help(lm)
