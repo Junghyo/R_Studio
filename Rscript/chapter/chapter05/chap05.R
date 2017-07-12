@@ -101,5 +101,22 @@ dotchart(x, labels = NULL, groups = NULL, gdata = NULL,
 chart_data
 names(chart_data)
 par(mfrow=c(1,1)) # 1행 1열 그래프 보기(한화면에 1개)
-dotchart(chart_data, col=c("blue","red"), lcol="1", pch=1:2, label=names(chart_data),
+dotchart(chart_data, col=c("blue","red"), lcol="1", pch=1:2, labels=names(chart_data),
          xlab="매출액", main="2014, 2015년도 분기별 매출액 현황[dotchart]", cex=1.2)
+
+# piechart 시각화
+help(pie)
+pie(x, labels = names(x), edges = 200, radius = 0.8,
+    clockwise = FALSE, init.angle = if(clockwise) 90 else 0,
+    density = NULL, angle = 45, col = NULL, border = NULL,
+    lty = NULL, main = NULL, ...)
+# x : 차트가 그려질 데이터
+# labels : 조각에 대한 설명문
+# col : 색상
+# border : 테두리색
+# lty : 선타입
+# main : 제목
+
+# 분기별 매출현황 시각화
+pie(chart_data, labels=names(chart_data), col=rainbow(8), cex=1.0)
+title("2014~2015년도 분기별 매출현황[piechart]")
