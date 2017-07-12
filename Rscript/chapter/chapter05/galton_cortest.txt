@@ -1,0 +1,15 @@
+
+	Pearson's product-moment correlation
+
+data:  galton$parent and galton$child
+t = 15.711, df = 926, p-value < 2.2e-16
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.4064067 0.5081153
+sample estimates:
+      cor 
+0.4587624 
+
+해석 
+p-value < 2.2e-16로 parent, child 두 변수는 매우 유의한 상관관계를 가지고 있다.
+상관계수는 0.4587로 약한 양의 상관관계를 가진다.
