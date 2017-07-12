@@ -125,3 +125,21 @@ pie(x, labels = names(x), edges = 200, radius = 0.8,
 pie(chart_data, labels=names(chart_data), col=rainbow(8), cex=1.0)
 title("2014~2015년도 분기별 매출현황[piechart]")
 dev.off()
+
+# 연속변수 시각화
+# 연속변수 : 시간, 길이 등 연속성을 가진 변수(boxplot, hist, scatterplot)
+pdf("C:/R_Studio/Rscript/chapter/chapter05/boxplot.pdf")
+help(boxplot)
+summary(VADeaths)
+
+boxplot(VADeaths, range=0,
+        main="Death Rates in Virginia (1940)[boxplot default]") 
+# range=0 : 최소값과 최대값을 점선으로 연결
+
+boxplot(VADeaths, notch=T, 
+        main="Death Rates in Virginia (1940)[boxplot notch=T]")
+# notch=T : 중위수 비교시 사용(허리선)
+mean(VADeaths) # 30.92
+abline(h=30.92, lty=3, col="red")
+help(abline)
+dev.off()
