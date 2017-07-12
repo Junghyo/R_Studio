@@ -334,4 +334,51 @@ summary(model)
 sink()
 plot(model)
 dev.off()
-help(lm)
+
+# 변수 간의 비교 시각화
+# 4개의 변수의 상호비교
+attributes(iris) # iris 데이터 셋 확인
+str(iris) #5개 변수, 150개 관측치
+mode(iris); class(iris) # list, data.frame
+head(iris)
+help(pairs)
+# 산점도 matrix
+postscriptFonts()
+pdf.options(family="Korea1deb")
+pdf("C:/R_Studio/Rscript/chapter/chapter05/iris_pairs.pdf")
+pairs(iris[,1:4], main="iris의 sepal~petal 비교")
+# virginica 종의 4개변수 상호 비교
+View(iris[iris$Species=='virginica', 1:5])
+pairs(iris[iris$Species=='virginica', 1:4], main="virginica 종의 4개변수 상호 비교")
+# setosa 종의 4개변수 상호 비교
+View(iris[iris$Species=='setosa', 1:5])
+pairs(iris[iris$Species=='setosa', 1:4], main="setosa 종의 4개변수 상호 비교")
+dev.off()
+
+# 3차원 산점도 시각화
+# 단계 1 : 패키지 설치 및 로딩
+install.packages("scatterplot3d")
+require(scatterplot3d)
+
+# 단계 2 : 꽃의 종류별 분류(Factor의 levels 보기)
+levels(iris$Species) # "setosa" "versicolor" "virginica" 
+iris_setosa <- iris[iris$Species=='setosa',]
+iris_versicolor <- iris[iris$Species=='versicolor',]
+iris_virginica <- iris[iris$Species=='virginica',]
+# 단계 3 : 3차원 틀(Frame) 생성
+# 형식 : scatterplot3d(밑변 컬럼명, 오른쪽변 컬럼명, 왼쪽변 컬럼명, type)
+pdf("C:/R_Studio/Rscript/chapter/chapter05/iris_scatterplot3d.pdf")
+iris_3d <- scatterplot3d(iris$Petal.Length, iris$Sepal.Length, iris$Sepal.Width, type="n")
+# type="n" : 기본 산점도를 표시하지 않음
+
+# 단계 4 : 3차원 3점도 시각화
+iris_3d$points3d(iris_setosa$Petal.Length, iris_setosa$Sepal.Length, iris_setosa$Sepal.Width,
+                 bg="orange", pch=21)
+iris_3d$points3d(iris_versicolor$Petal.Length, iris_versicolor$Sepal.Length,
+                 iris_versicolor$Sepal.Width, pch=23, bg="blue")
+iris_3d$points3d(iris_virginica$Petal.Length, iris_virginica$Sepal.Length,
+                 iris_virginica$Sepal.Width, pch=25, bg="green")
+legend(iris_3d$xyz.convert(4,3,5.5),c("setosa","versicolor","virginica"),fill=c("orange","blue","green"))
+title(main="iris의 setosa, versicolor, virginica 종의 꽃잎길이, 
+꽃받침 넓이와 길이에 대한 3차원 산점도\n[scatterplot3d]")
+dev.off()
