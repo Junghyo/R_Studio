@@ -156,6 +156,8 @@ mode(iris); class(iris) # list, data.frame
 levels(iris$Species) # 인자수 확인 : 3개
 
 # iris의 꽃받침 길이 hist 시각화
+par(mfrow=c(1,1))
+pdf("C:/R_Studio/Rscript/chapter/chapter05/hist.pdf")
 range(iris$Sepal.Length) # 꽃받침 길이 범위 : 4.3~7.9
 hist(iris$Sepal.Length, xlab="iris$Sepal.Length", xlim=c(4.3,7.9), col="magenta",
      main="Histogram of iris$Sepal.Length [frequency=T]")
@@ -173,5 +175,39 @@ hist(iris$Sepal.Width, freq=F, xlab="iris$Sepal.Width", xlim=c(2.0,4.5),
 lines(density(iris$Sepal.Width), col="red")
 # 단계 2 : 히스토그램에 정규분포 추정 곡선 추가
 curve(dnorm(x, mean(iris$Sepal.Width), sd(iris$Sepal.Width)), col="blue", add=T)
-legend(3.9, 1.2, c("density line","normal dist line"), col=c("red","blue"), lwd=1)
+legend(3.3, 1.2, c("density line","normal dist line"), col=c("red","blue"), lwd=1)
+dev.off()
 
+# 산점도 시각화
+# 두 개 이상의 변수들 사이의 분포를 점으로 표시한 차트
+# ex : x축 몸무게, y축 
+help(runif) # runif(x, min, max)
+price <- runif(10,1,100) # 1~100 사이의 난수 10개
+price
+# 단계 1 : 산점도 그리기
+pdf("C:/R_Studio/Rscript/chapter/chapter05/plot1.pdf")
+postscriptFonts()
+pdf.options(family="Korea1deb")
+plot(price, col="red", ylim=c(0,100))
+# 단계 2 : 대각선 추가
+par(new=T)
+line_chart=1:100
+# 대각선 추가 : axes=F, ann=F 속성으로 x, y 축의 눈금과 축 이름 제거
+plot(line_chart,type="l", axes=F, ann=F)
+# 단계 3 : 텍스트 추가
+text(70,80,"대각선 추가", col="blue")
+
+# type 속성으로 그리기
+par(mfrow=c(2,2))
+plot(price, type="l", main="plot, type=l") # 실선
+plot(price, type="o", main="plot, type=o") # 데이터 원형 표시와 실선
+plot(price, type="h", main="plot, type=h") # 직선(barplot)
+plot(price, type="s", main="plot, type=s") # 꺽은선
+
+# pch 속성으로 그리기
+plot(price, type="o", pch=1, main="pch=1")
+plot(price, type="o", pch=20, col="orange", main="pch=20, col=orange")
+plot(price, type="o", pch=20, col="orange", lwd=3,main="pch=20, col=orange, lwd=3")
+plot(price, type="o", pch=20, col="orange", cex=1.5,
+     main="pch=20, col=orange, cex=1.5")
+dev.off()
