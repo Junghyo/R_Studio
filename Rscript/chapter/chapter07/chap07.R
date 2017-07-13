@@ -178,3 +178,14 @@ new_data$postion2[new_data$position==4] <- "4급"
 new_data$postion2[new_data$position==5] <- "5급"
 new_data$postion2 <- as.factor(new_data$postion2)
 write.csv(new_data, "new_data.csv")
+
+# 범주형 vs 범주형 데이터 분포 시각화
+# 단계 1 : 거주지역과 성별 컬럼을 대상으로 빈도수 구하기
+resident_gender <- table(new_data$resident2, new_data$gender2)
+resident_gender
+gender_resident <- table(new_data$gender2, new_data$resident2)
+gender_resident
+
+# 단계 2 : 성별에 따른 거주지역 분포 현황 시각화
+barplot(resident_gender, beside=T, col=rainbow(5), legend=row.names(resident_gender),
+        main="성별에 따른 거주지역 분포 현황")
