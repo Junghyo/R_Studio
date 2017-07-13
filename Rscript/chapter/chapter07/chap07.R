@@ -187,9 +187,12 @@ gender_resident <- table(new_data$gender2, new_data$resident2)
 gender_resident
 
 # 단계 2 : 성별에 따른 거주지역 분포 현황 시각화
+pdf.options(family="Korea1")
+pdf("C:/R_Studio/Rscript/chapter/chapter07/gender_resident_barplot.pdf")
 barplot(resident_gender, beside=T, col=rainbow(5), legend=row.names(resident_gender),
         main="성별에 따른 거주지역 분포 현황")
 
 # 단계 3 : 거주지역에 따른 성별 분포 현황
 barplot(gender_resident, beside=T, col=c(1,2), legend=c("남자", "여자"),
         main="거주지역별 성별 분포 현황")
+dev.off()
