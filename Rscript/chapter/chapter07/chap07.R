@@ -196,3 +196,19 @@ barplot(resident_gender, beside=T, col=rainbow(5), legend=row.names(resident_gen
 barplot(gender_resident, beside=T, col=c(1,2), legend=c("남자", "여자"),
         main="거주지역별 성별 분포 현황")
 dev.off()
+
+# 연속형vs범주형 
+# 연속형변수(나이), 범주형변수(직업유형) 
+# 단계 1 : lattice package 설치
+install.packages("lattice")
+library(lattice)
+# lattice package : 고급시각화 분석에서 사용되는 package
+
+# 단계 2 : 직업유형에 따른 나이 분포 현황
+pdf("C:/R_Studio/Rscript/chapter/chapter07/age_job2_plot.pdf")
+str(new_data)
+densityplot(~age, data=new_data, groups=job2, plot.points=T, auto.key=T,
+            main="직업 유형에 따른 나이의 분포 현황[densityplot]")
+boxplot(new_data$age~new_data$job2, main="직업별 나이 분포 형황[boxplot]")
+library(dplyr)
+dev.off()
