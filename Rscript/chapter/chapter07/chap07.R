@@ -209,6 +209,149 @@ pdf("C:/R_Studio/Rscript/chapter/chapter07/age_job2_plot.pdf")
 str(new_data)
 densityplot(~age, data=new_data, groups=job2, plot.points=T, auto.key=T,
             main="직업 유형에 따른 나이의 분포 현황[densityplot]")
+# plot.points=T : 밀도, auto.key=T : 범례
 boxplot(new_data$age~new_data$job2, main="직업별 나이 분포 형황[boxplot]")
 library(dplyr)
 dev.off()
+names(new_data)[14] <- "position2"
+# 연속형 vs 범주형 vs 범주형
+# 구매비용(연속형), 성별(범주형), 서열(범주형)
+# 단계 1 : 성별에 따른 직급별 구매비용 분석
+pdf("C:/R_Studio/Rscript/chapter/chapter07/price_gender2_pos2_plot.pdf")
+densityplot(~price | factor(gender2), data=new_data, groups=position2, plot.points=T,
+            auto.key=T,
+            main="성별(gender2) 직급(position2)에 따른 구매비용분포(price)[densityplot]")
+# factor(gender2) : 격자를 만들어주는 컬럼을 지정하는 속성(성별로 격자 생성)
+# groups=position2  : 하나의 격자(성별)에서 그룹을 지정하는 속성(직급으로 그룹 생성)
+
+# 단계 2 : 직급에 따른 성별 구매비용 분석
+densityplot(~price|factor(position2), data=new_data, groups=gender2, auto.key=T,
+            plot.point=T, 
+            main="직급에 따른 성별 구매비용 분포[densityplot]")
+dev.off()
+# factor(position2) : 직급으로 격자 생성
+# groups=gender2 : 하나의 격자에서 그룹을 지정(성별로 그룹 생성)
+
+# 연속형(2개) vs 범주형(1개)
+# 연속형(구매비용, 나이), 범주형(성별)
+pdf("C:/R_Studio/Rscript/chapter/chapter07/price_age_gender2_plot.pdf")
+xyplot(price~age | factor(gender2), data=new_data,
+       main="성별 나이에 따른 구매비용 분포[xyplot]")
+dev.off()
+
+# 파생변수 생성
+# 파생변수 : 분석을 위해 코딩된 데이터를 대상으로 새로운 변수를 생성
+# 데이터 셋 생성
+user <- data.frame(id=c("hong", "lee", "kang", "yoo"),
+                   resident=c("주택", "빌라", "아파트", "오피스텔"),
+                   loc=c("서울시", "수원시", "인천시", "성남시"))
+user
+table(user$id, user$resident)
+# 더미형식으로 파생변수 생성
+# 더미(dummy) : 명목상 두가지 상태(0과 1)로 범주화하여 나타내는 형태
+# 주거환경 컬럼 : 주택 유형(단독주택, 다가구주택 : 0), 아파트 유형(아파트, 오피스텔 : 1)
+
+# 단계 1 : 데이터 파일 가져오기
+user_data <- read.csv(file.choose(), header=T) # Part-II, user_data.csv
+head(user_data)
+str(user_data) # 5개 변수, 400개 관측치
+mode(user_data); class(user_data) # list, data.frame
+table(user_data$house_type)
+# 단독주택(1), 다가구주택(2), 아파트(3), 오피스텔(4)
+
+# 단계 2 : 더미변수 생성
+user_data$house_type2 <- ifelse(user_data$house_type==1 | user_data$house_type==2, 0, 1)
+user_data[c("house_type", "house_type2")]
+head(user_data)
+
+# 1:1 관계로 파생변수 생성
+# 지불정보 테이블(pay_data.csv)의 
+# user_id 대 product_type
+# user_id 대 pay_method 간의 1:N 관계를 1:1 관계로 변수를 나열하여 파생변수를 생성
+
+# 고객식별번호(user_id) 대 상품유형(product_type) 파생변수 생성
+# 단계 1 : 데이터 셋 가져오기
+pay_data <- read.csv(file.choose(), header=T) # Part-II, pay_data.csv
+head(pay_data)
+str(pay_data) # 4개 변수, 400개 관측치
+table(pay_data$product_type) # product_type 빈도수 확인
+
+# 단계 2 : 고객별 상품유형에 따른 구매금액 합계 파생변수 생성
+library(reshape2)
+product_price <- dcast(pay_data, user_id~product_type, sum, na.rm=T)
+head(product_price)
+# dcast()로 user_id를 행, product_type을 열로 지정하여 고객별 구매한 상품유형에 따른
+# 구매금액의 합계를 계산하여 파생변수를 생성
+
+# 단계 3 : 컬럼명 수정
+names(product_price)[2:6] <- c("식료품(1)", "생필품(2)", "의류(3)", "잡화(4)", "기타(5)")
+
+# 고객식별번호(user_id) 대 고객지불유형(pay_method) 파생변수 생성
+# 단계 1 : 고객별 지불유형에 따른 구매상품 갯수 파생변수 생성
+pay_price <- dcast(pay_data, user_id~pay_method, length)
+head(pay_price)
+# dcast()로 user_id를 행, pay_method를 열로 지정하여 고객별 지불유형에 따른 구매상품 개수를
+# 파생변수로 생성. length는 구매상품의 갯수를 구하기 위해 지정
+# 단계 2 : 컬럼명 변경
+names(pay_price)[2:5] <- c("현금(1)", "직불카드(2)", "신용카드(3)", "상품권(4)")
+
+# 파생변수 합치기
+# 단계 1 : 고객정보 테이블(user_data)와 상품유형에 따른 구매금액 합계(product_price) 병합
+library(plyr)
+user_pay_data <- join(user_data, product_price, by="user_id")
+head(user_pay_data)
+
+# 단계 2 : 단계1의 병합결과와 고객별 지불융형에 따른 구매상품 개수(pay_price) 병합
+user_pay_data <- join(user_pay_data, pay_price, by="user_id")
+user_pay_data[c(1:10), c(1,7:length(user_pay_data))]
+
+# 사칙연산으로 파생변수 생성 : 총 구매금액 파생변수 생성
+names(user_pay_data)
+user_pay_data$총구매금액 <- user_pay_data$`식료품(1)`+user_pay_data$`생필품(2)`+
+  user_pay_data$`의류(3)`+user_pay_data$`잡화(4)`+user_pay_data$`기타(5)`
+user_pay_data[c(1:10), c(1,7:11,16)]
+
+# 표본추출
+# 데이터 정제 후 표본으로 사용할 데이터를 추출하는 샘플링(sampling)
+
+# 정제데이터 저장
+print(user_pay_data)
+View(user_pay_data)
+setwd("C:/R_Studio/Rscript/chapter/chapter07")
+write.csv(user_pay_data, "cleanData.csv", quote=F, row.names=F)
+
+# 데이터 불러오기
+data <- read.csv(file.choose(), header=T) # Part-II, cleanData.csv
+str(data) # 16개 변수, 400개 관측치
+sample1 <- sample(nrow(data), 30) # 30개 무작위 추출
+sample1 # 추출된 행 번호 출력
+
+# 50~data 길이 사이에서 30개 무작위 추출
+sample2 <- sample(50:nrow(data), 30)
+sample2
+
+# 50~100 사이에서 30개 무작위 추출
+sample3 <-sample(50:100, 30)
+sample3
+
+# 다양한 범위를 지정해서 30개 무작위 추출
+sample4 <- sample(c(10:50, 80:150, 160:190), 30)
+sample4
+
+# 단계 2 : 샘플링 데이터로 표본 추출
+View(data[sample1,])
+
+
+# iris 데이터 셋을 대상으로 7:3비율로 데이터 셋 생성
+# 단계 1 : iris 관측치와 컬럼수 확인
+data("iris")
+dim(iris) # 5개 변수, 150개 관측치
+str(iris) 
+idx <- sample(1:nrow(iris), nrow(iris)*0.7)
+training <- iris[idx,]
+testing <- iris[-idx,]
+dim(training)
+dim(testing)
+# iris 데이터 셋을 대상으로 전체의 70%을 훈련데이터, 30%을 검정데이터로 생성하는 과정
+# 예측분석에서 훈련데이터를 이용하여 모델을 생성
+# 검정데이터를 이용하여 생성된 모델을 평가하는 용도
