@@ -19,6 +19,7 @@ reversed <- a[[1]][12:1]
 reversed # [1] "?" "u" "o" "y" " " "e" "r" "a" " " "w" "o" "h"
 paste(reversed, collapse="") # "?uoy era woh"
 
+# reverse letter function
 reversed_f <- function(x){
   proc1 <- strsplit(x, split="")
   reversed <- proc1[[1]][nchar(x):1]
@@ -38,3 +39,20 @@ v1 <- c("abc", "de")
 length(v1) # 2
 nchar(v1) # 3, 2
 # length는 vector의 크기를 반환하고 nchar는 백터 내 각 데이터들의 크기를 반환
+
+
+a <- strsplit("how are you?", split=" ")
+a
+length(a[[1]])
+reverse <- a[[1]][3:1]
+reverse
+paste(reverse, collapse=" ")
+
+
+# reverse word function
+reverse_f <- function(x){
+  x2 <- strsplit(x, split=" ")
+  reverse <- x2[[1]][length(x2[[1]]):1]
+  paste(reverse, collapse=" ")
+}
+reverse_f("how are you?")
