@@ -1,0 +1,8 @@
+snippet header
+	#------------------------------
+	# `r R.version.string`
+	#
+	# @ Author: yoda
+	# @ `r paste(date())`
+	# @ `r Sys.timezone()`
+	#------------------------------
