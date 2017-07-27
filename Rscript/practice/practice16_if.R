@@ -30,4 +30,5 @@ mean_by_cyl2 <- function(x){
     mean(mtcars[which(mtcars$cyl==x), 1])
 }
 
+.
 
