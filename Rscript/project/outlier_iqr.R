@@ -1,5 +1,18 @@
-library(outliers)
+df <- read.csv(file.choose())
+par(mfrow=c(1, 2))
+str(df)
+plot(POSTPRICE~POSTRELGAP, data=df)
+boxplot(POSTPRICE~MODEL+GB, data=df)
+df2 <- read.csv(file.choose())
+str(df2)
+plot(POSTPRICE~POSTRELGAP, data=df2)
+boxplot(POSTPRICE~MODEL, data=df2)
 library(dplyr)
-library(plyr)
-price_iqr <- ddply(df, .(POSTDATE, MODEL, GB), summarize, upperQ=fivenum(POSTPRICE)[4], lowerQ=fivenum(POSTPRICE)[2], IQR=upperQ-lowerQ)
-price_iqr[1:10]
+iqr <- ddply(df, .(MODEL, GB), summarise, upperQ=fivenum(POSTPRICE)[4], lowerQ=fivenum(POSTPRICE)[2], IQR=upperQ-lowerQ)
+write.csv(iqr, "iqr.csv", row.names=F)
+df3 <- read.csv(file.choose())
+str(df3)
+boxplot(POSTPRICE~MODEL+GB, data=df3)
+
+plot(POSTPRICE~POSTRELGAP, data=df3)
+
