@@ -72,4 +72,100 @@ recode
 dbDisconnect(conn)
 
 
+# 연관어 분석
+# 특정 단어와 연관성이 있는 단어들을 선별하여 네트워크 형태로 시각화하는 과정
+# 단계 1 : text 파일 가져오기
+market <- file(file.choose(), encoding="UTF-8") # Part-II, marketing.txt
+market2 <- readLines(market) # 줄 단위 데이터 생성
+close(market) # market 메모리에서 제거
+head(market2)
 
+# 단계 2 : 줄 단위 단어 추출
+lword <- Map(extractNoun, market2)
+length(lword)  # 472
+lword <- unique(lword) # 중복단어 제거(전체 대상)
+length(lword) # 353
+
+lword <- sapply(lword, unique) # 중복단어 제거(줄 단위 대상)
+lword
+
+# 연관어 분석을 위한 전처리
+# 길이 2~4 문자 길이로 필터링
+# 단계 1 : 필터링 함수 생성
+filter1 <- function(x){
+  nchar(x) <= 4 && nchar(x) >= 2 && is.hangul(x)
+}
+
+# Filter()를 이용하여 vector 단위로 필터링 하는 함수 정의
+filter2 <- function(x){
+  Filter(filter1, x)
+}
+
+# is.hangul() : vector를 대상으로 한글 추출
+# Filter(f, x) : 함수(f)를 이용하여 vector(x) 필터링 기능
+# nchar(x) : vector를 대상으로 문자수 반환
+
+# 단계 2 : 줄 단위로 추출된 단어 전처리
+# 길이 1개 이하 또는 5개 이상 제거
+lword <- sapply(lword, filter2)
+lword
+
+# Transaction 
+mode(lword); class(lword) # list, list
+# transaction 형식으로 자료구조를 변환해야함
+# transaction : 연관분석에서 사용되는 자료 처리 단위
+
+# 단계 1 : package 설치
+install.packages("arules")
+library(arules)
+
+# 단계 2 : transaction 생성
+# as() 사용. 실행결과 transaction 수(행)과 아이템 수(열) 나타남
+wordtran <- as(lword, "transactions") # 형식 : as(data, "type")
+wordtran
+wordtable <- crossTable(wordtran) # 교차표 작성
+wordtable
+
+# transaction : 상품거래정보 의미
+# item : 상품거래에서 발생하는 상품목록
+# 여기서는 lword 한줄을 transaction, 한줄에서 만들어진 단어를 item으로 처리
+# crossTalbe() : transaction 객체를 대상으로 동일한 단어끼리 교차테이블 작성
+
+# 단어 간 연관규칙 발견
+# apriori() : 연관규칙 알고리즘 적용
+#            지지도와 신뢰도를 지정하여 연관규칙 발견
+# apriori(data, parameter=NULL, appearance=NULL, control=NULL)
+# data : transaction type의 객체
+# parameter : 지지도(support), 신뢰도(confidence), 연관단어 최대길이(maxlen)를 인수로 사용 가능
+# appearance : 연관규칙을 나타내는 속성 지정
+# control : 연관규칙 결과(item)을 정렬(sort)
+
+# 단계 1 : 연관규칙 발견(support: 0.25, confidence:0.05인 경우 59개 규칙 발견)
+tranrules <- apriori(wordtran, parameter=list(supp=0.25, conf=0.05))
+# [59 rule(s)] done [0.00s].
+inspect(tranrules)
+
+# 연관어 시각화
+# 연관규칙 결과를 data.frame 또는 matrix로 변경
+
+# 단계 1 : 연관단어 시각화를 위해 자료구조 변경
+rules <- labels(tranrules, ruleSep=" ") # 연관규칙 label을 " "로 분
+rules
+class(rules) # character
+
+# 단계 2 : 문자열로 묶인 연관단어를 행렬구조 변경
+rules <- sapply(rules, strsplit, " ", USE.NAMES=F)
+rules
+
+# 단계 3 : 행 단위로 묶어서 matrix로 변형
+rule_mt <- do.call("rbind", rules)
+rule_mt
+class(rule_mt)
+
+# 연관어 시각화를 위한 igraph package 설치
+install.packages("igraph")
+library(igraph)
+
+# edgelist보기
+# 연관단어를 정점(Vertex) 형태의 목록으로 제공.
+ruleg <- graph.edgelist(rule_mt[c(12:59)], directed=F)
