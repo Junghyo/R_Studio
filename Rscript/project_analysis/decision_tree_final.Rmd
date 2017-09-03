@@ -1,0 +1,80 @@
+---
+title: "decision tree"
+author: "yoda"
+date: "2017년 9월 4일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 1. 데이터 로드 및 확인
+
+```{r}
+getwd()
+data1 <- read.csv("perfact2.csv")
+str(data1)
+```
+
+
+### 2. 변수타입 변환
+```{r}
+# 연속형 변수의 타입 변환
+data1$POSTPRICE <- as.numeric(data1$POSTPRICE)
+data1$POSTRELGAP <- as.numeric(data1$POSTRELGAP)
+data1$POSTNEXTGAP <- as.numeric(data1$POSTNEXTGAP)
+data1$RELPRICE   <- as.numeric(data1$RELPRICE)
+data1$FALLRATE2<- ifelse(data1$FALLRATE >= 50, 1, 0)
+data1$FALLRATE2<-as.factor(data1$FALLRATE2)
+
+str(data1)
+```
+출고가 대비 가격 하락율(FALLRATE)을 이용하여 50%가 넘는 것은 1로
+50%미만은 0으로 범주화하여 FALLRATE2변수를 생성한다.
+
+### 3. 훈련데이터 6 : 테스트데이터 4 비율로 세팅
+```{r}
+library(caret)
+part<-createDataPartition(data1$FALLRATE2, p=0.6)
+ind.train<-part$Resample1
+data2.train<-data1[ind.train,]
+data2.test<-data1[-ind.train,]
+```
+
+### 4. 훈련데이터로 감소율 50% 이상, 미만을 판단하는 decision tree 실행
+```{r}
+library(rpart)
+rpart.tree<-rpart(FALLRATE2 ~ GB+KRNAME+POSTPRICE+CONTRACT+GUARANTEE+CHANGES+CONDITIONS+COMPONENT
+                  +POSTRELGAP+POSTNEXTGAP+RELPRICE+SOLD, data=data2.train)
+rpart.tree$control
+plot(rpart.tree, compress = TRUE , margin = 0.2)
+text(rpart.tree, cex = 0.5)
+```
+root : 시작 23348개중에서 0이 11024 1이 많기 때문에 1로표시
+split : 분할기준
+n : 개체수
+loss : 
+### rpart.plot을 이용하여 decision tree 그리기
+```{r}
+# install.packages("rpart.plot")
+library(rpart.plot)
+prp(rpart.tree, type=4, extra=2, digits=3)
+```
+
+### 5. 훈련데이터를 통한 decision tree로 테스트 데이터 실행
+```{r}
+test.pred1 <- predict(rpart.tree, newdata=data2.test, type = "class")
+confusionMatrix(test.pred1,data2.test$FALLRATE2)
+```
+```{r}
+# install.packages("party")
+library(party)
+library(caret)
+gtree <- ctree(FALLRATE2 ~ GB+KRNAME+POSTPRICE+CONTRACT+GUARANTEE+CHANGES+CONDITIONS+COMPONENT
+               +POSTRELGAP+POSTNEXTGAP+RELPRICE+SOLD,, data=data2.train)
+gtree
+plot(gtree, ,type="simple")
+??plot
+```
+

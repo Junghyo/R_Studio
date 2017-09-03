@@ -1,0 +1,62 @@
+---
+title: "다항회귀분석"
+author: "yoda"
+date: "2017년 9월 3일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 데이터 로드 및 확인1
+## 데이터 로드 및 확인2
+### 데이터 로드 및 확인3
+
+```{r}
+df <- read.csv("perfact2.csv")
+str(df)
+```
+
+연속형 변수 타입 변환(as.numeric) 및 표준화
+```{r}
+
+```
+
+## 다항회귀분석
+
+```{r}
+lm1 <- lm(POSTPRICE~KRNAME+GB+CONTRACT+GUARANTEE+CHANGES+CONDITIONS+COMPONENT+SOLD
+          +POSTRELGAP+POSTNEXTGAP+RELPRICE+FALLRATE, data=df)
+summary(lm1)
+```
+# 다항회귀분석에서 회귀계수만 불러오기
+
+```{r}
+coef(lm1)
+```
+# ANOVA
+```{r}
+anova(lm1)
+```
+
+# 다항회귀분석시 각 독립변수가 어떤 방식으로 쓰였는지 확인
+
+```{r}
+tail(model.matrix(lm1))
+
+```
+
+# 유의한 변수를 넣기위해 stepwise 실ㅎ
+```{r}
+lm1.step <- step(lm1, direction="both")
+formula(lm1.step)
+```
+
+# 다항회귀분석의 최종모델확인
+```{r}
+multi.best.lm1 <- lm(formula(lm1.step), data=df)
+summary(multi.best.lm1)
+
+```
+

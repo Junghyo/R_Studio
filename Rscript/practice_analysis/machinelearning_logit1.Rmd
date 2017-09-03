@@ -1,0 +1,113 @@
+---
+title: "머신런닝을 이용한 로지스틱회귀분석"
+author: "yoda"
+date: "2017년 9월 3일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 데이터 로딩 및 확인
+
+```{r}
+data1 <- read.csv("perfact2.csv")
+str(data1)
+```
+
+# 변수타입 변환 및 연속형변수 표준화
+```{r}
+data1$POSTPRICE  <- as.numeric(data1$POSTPRICE)
+data1$POSTRELGAP  <- as.numeric(data1$POSTRELGAP)
+data1$POSTNEXTGAP  <- as.numeric(data1$POSTNEXTGAP)
+data1$RELPRICE   <- as.numeric(data1$RELPRICE)
+
+normal <- function(x){
+  return ((x-min(x)) / (max(x)-min(x)))
+}
+
+data1$POSTPRICE  <- normal(data1$POSTPRICE)
+data1$POSTRELGAP  <- normal(data1$POSTRELGAP)
+data1$POSTNEXTGAP  <- normal(data1$POSTNEXTGAP)
+data1$RELPRICE   <- normal(data1$RELPRICE)
+str(data1)
+```
+```{r}
+summary(data1$POSTNEXTGAP)
+```
+
+## 훈련데이터와 테스트데이터 나누기
+
+```{r}
+# install.packages("caret")
+library(caret)
+library(Hmisc)
+describe(data1$SOLD)
+part<-createDataPartition(data1$SOLD,p=0.7)
+ind.train<-part$Resample1
+data2.train<-data1[ind.train,]
+data2.test<-data1[-ind.train,]
+```
+
+## 훈련데이터 7 : 테스트데이터 3 비율로 나눈 후 확이
+```{r}
+describe(data2.train$SOLD)
+describe(data2.test$SOLD)
+```
+## 훈련데이터로 로지스틱 회귀분석 실행
+```{r}
+train_logit <- glm(SOLD~KRNAME+GB+POSTPRICE+CONTRACT+GUARANTEE+CHANGES
+                   +CONDITIONS+COMPONENT+POSTRELGAP+POSTNEXTGAP+RELPRICE
+                   +FALLRATE, family=binomial, data=data1)
+summary(train_logit)
+```
+# 훈련데이터로 나온 결과를 토대로 테스트데이터 로지스틱회귀분석 실행
+```{r}
+test.pred <- predict(train_logit, newdata=data2.test, type="response")
+head(test.pred, 20)
+```
+
+```{r}
+plot(test.pred)
+```
+# 훈련데이터의 로지스틱회귀분석의 최적모델을 찾기 위해 stepwise 실행
+```{r}
+train_logit.step <- step(train_logit, direction="both")
+formula(train_logit.step)
+```
+```{r}
+formula(train_logit.step)
+```
+
+# 훈련데이터의 최적모델을 통해 다시 훈련용데이터 로지스틱회귀분석 실행
+```{r}
+train_logit.best <- glm(formula(train_logit.step), family=binomial, data=data2.train)
+summary(train_logit.best)
+```
+
+# 훈련용데이터를 통해 얻은 최적모델로 테스트데이터 로지스틱회귀분석 실행
+```{r}
+test.pred.best <- predict(train_logit.best, newdata=data2.test, type="response")
+head(test.pred.best, 20)
+plot(test.pred.best)
+```
+# data2.test의 판매여부(SOLD)를 타겟으로 설정하고 성능확인
+```{r}
+test_target <- data2.test$SOLD
+lr_trn_predicted <- rep(0, length(test_target))
+lr_trn_predicted[which(test.pred.best >= 0.4)] <- 1
+
+```
+
+# 판매완료면 1, 아니면 0으로 설정
+```{r}
+data2.test$SOLD2 <- ifelse(data2.test$SOLD=="yes", 1, 0)
+```
+# 성능확인
+```{r}
+# install.packages("e1071")
+# library(e1071)
+confusionMatrix(lr_trn_predicted,data2.test$SOLD2)
+```
+
