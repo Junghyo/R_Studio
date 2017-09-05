@@ -30,7 +30,7 @@ data1 <- read.csv("perfact2.csv")
 str(data1)
 ```
 
-데이터 개요에서 설명한 데이터를 그대로 사용한다.(총 38912개 관측치, 15개 변수) 
+(총 38912개 관측치, 15개 변수) 
 
 
 ### 3. 변수타입 변환 및 연속형변수 표준화
@@ -62,7 +62,6 @@ z변환을 사용한다.
 ### 3. 훈련데이터와 테스트데이터 나누기
 
 ```{r}
-install.packages("caret")
 library(caret)
 library(Hmisc)
 
@@ -91,6 +90,7 @@ train_logit <- glm(SOLD~KRNAME+GB+CONTRACT+GUARANTEE+CHANGES
                    +CONDITIONS+COMPONENT+POSTDATE, family=binomial, data=data2.train)
 
 # 다중공선성이 높은 변수를 순차적으로 제거 
+library(car)
 vif(train_logit)
 
 # 오즈비 확인
@@ -135,6 +135,7 @@ summary(train_logit.best)
 
 ### 9. 훈련용데이터를 통해 얻은 최적모델로 테스트데이터 로지스틱회귀분석 실행
 ```{r}
+library(ROCR)
 test.pred.best <- predict(train_logit.best, newdata=data2.test, type="response")
 test.pred.best2 <- prediction(test.pred.best, data2.test$SOLD)
 head(test.pred.best, 20)
@@ -152,7 +153,6 @@ lr_trn_predicted[which(test.pred.best >= 0.4)] <- 1
 data2.test$SOLD2 <- ifelse(data2.test$SOLD=="yes", 1, 0)
 
 # 성능확인
-
 library(e1071)
 confusionMatrix(lr_trn_predicted,data2.test$SOLD2)
 ```
@@ -176,8 +176,7 @@ Neg Pred Value는 1로 예측했는데 실제로 1일 확률
 
 ### 11. AUC 확인
 ```{r}
-install.packages("ROCR")
-library(ROCR)
+
 df_pred2 <- prediction(test.pred.best, data2.test$SOLD2)
 plot(performance(df_pred2, "tpr", "fpr"))
 performance(df_pred2, "auc")
@@ -186,7 +185,7 @@ auc <- auc@y.values[1]
 auc
 ```
 
-0.6306097의 예측률로 예측이 제대로 되지 않음을 알 수 있다.
+약 63%의예측률로 예측이 제대로 되지 않음을 알 수 있다.
 
 excellent = 0.9~1
 
@@ -214,7 +213,7 @@ train_logit2 <- glm(SOLD ~ KRNAME+GB+CONTRACT+CONDITIONS+COMPONENT, data=data2.t
 anova(train_logit2, train_logit, test="Chisq")
 ```
 
-p값이 0.094이며 Residual Deviance도 33782에서 33792로 크게 변하지 않아 예측도가 크게
+p값이 0.094이며 Residual Deviance도 크게 변하지 않아 예측도가 크게
 달라지지 않을꺼라 예상된다.
 
 # ROC 커브 확인
